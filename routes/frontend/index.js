@@ -40,6 +40,7 @@ module.exports = (app) => {
     const pageSize = parseInt(req.query.pageSize || 8)
 
     const items = await Book.find()
+      .sort('-start_date')
       .setOptions({ populate: 'tags' })
       .skip((pageNo - 1) * pageSize)
       .limit(pageSize)
@@ -52,6 +53,7 @@ module.exports = (app) => {
     const pageSize = parseInt(req.query.pageSize || 8)
 
     const items = await Post.find()
+      .sort('-date')
       .setOptions({ populate: 'tags' })
       .skip((pageNo - 1) * pageSize)
       .limit(pageSize)
@@ -74,7 +76,7 @@ module.exports = (app) => {
       en: 'read',
       zh: '阅读',
       num: await Book.find().count(),
-      list: await Book.find().sort('-date').limit(5)
+      list: await Book.find().sort('-start_date').limit(5)
     }
     const post = {
       en: 'post',
@@ -86,7 +88,7 @@ module.exports = (app) => {
       en: 'store',
       zh: '收藏',
       num: await Store.find().count(),
-      list: await Store.find().sort('-date').limit(5)
+      list: await Store.find().sort('-start_date').limit(5)
     }
     res.send({
       mainPic,
