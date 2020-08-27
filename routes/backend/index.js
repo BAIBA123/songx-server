@@ -63,7 +63,9 @@ module.exports = (app) => {
 
   app.post('/backend/api/uploads', upload.single('file'), async (req, res) => {
     const { file } = req
-    const url = `http://127.0.0.1:9876/uploads/${file.filename}`
+    // const url = `http://127.0.0.1:9876/uploads/${file.filename}`
+    // const url = `http://127.0.0.1:9876/uploads/${file.filename}`
+    const url = process.env.MODE_ENV === 'development' ? `http://127.0.0.1:9876/uploads/${file.filename}` : `http://114.55.242.15:9876/uploads/${file.filename}`
     res.send({ url, errno: 0 })
   })
 }
