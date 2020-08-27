@@ -5,6 +5,7 @@ const schema = mongoose.Schema({
   pic: { type: String },
   date: { type: Date },
   content: { type: String },
+  keywords: { type: String },
   status: { type: Boolean }
 })
 

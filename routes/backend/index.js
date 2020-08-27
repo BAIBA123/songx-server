@@ -16,7 +16,7 @@ module.exports = (app) => {
 
     const pageNo = parseInt(req.query.pageNo) || 1
     const pageSize = parseInt(req.query.pageSize) || 10
-    const items = await req.Model.find(findOptions).setOptions(queryOptions).skip((pageNo - 1) * pageSize).limit(pageSize)
+    const items = await req.Model.find(findOptions).sort('-start_date').sort('-date').setOptions(queryOptions).skip((pageNo - 1) * pageSize).limit(pageSize)
     const total = await req.Model.find().count()
     res.send({ items, total })
   })
@@ -63,8 +63,6 @@ module.exports = (app) => {
 
   app.post('/backend/api/uploads', upload.single('file'), async (req, res) => {
     const { file } = req
-    // const url = `http://127.0.0.1:9876/uploads/${file.filename}`
-    // const url = `http://127.0.0.1:9876/uploads/${file.filename}`
     const url = process.env.MODE_ENV === 'development' ? `http://127.0.0.1:9876/uploads/${file.filename}` : `http://114.55.242.15:9876/uploads/${file.filename}`
     res.send({ url, errno: 0 })
   })
