@@ -6,6 +6,7 @@ module.exports = (app) => {
   const Pic = require('../../models/Pic')
   const Post = require('../../models/Post')
   const Store = require('../../models/Store')
+  const Comment = require('../../models/Comment')
   const router = express.Router({ mergeParams: true })
 
   // 获取列表 菜单 && 友链
@@ -13,6 +14,9 @@ module.exports = (app) => {
     let findOptions = {}
     if (req.Model.modelName === 'Note') {
       findOptions = { book_id: req.query.book_id }
+    }
+    if (req.Model.modelName === 'Comment') {
+      findOptions = { postId: req.query.postId }
     }
     const items = await req.Model.find(findOptions)
     res.send(items)
@@ -96,7 +100,13 @@ module.exports = (app) => {
     })
   })
 
+  // 评论
+  app.post('/frontend/api/comment', async (req, res) => {
+    const model = await Comment.create(req.body)
+    res.send({ model })
+  })
+
   app.get('/test', async (req, res) => {
-    res.send({ flag: false })
+    console.log('yes')
   })
 }
