@@ -24,6 +24,13 @@ module.exports = (app) => {
 
   // 获取单个
   router.get('/:id', async (req, res) => {
+    if (req.Model.modelName === 'Post') {
+      const item = await req.Model.findById(req.params.id)
+      const date = await req.Model.findById(req.params.id, 'date')
+      const before = await req.Model.find({ date: { $gt: date.date } }).limit(1)
+      const next = await req.Model.find({ date: { $lt: date.date } }).sort('-date').limit(1)
+      res.send({ before, next, item })
+    }
     const item = await req.Model.findById(req.params.id)
     res.send({ item })
   })
@@ -49,7 +56,11 @@ module.exports = (app) => {
       .skip((pageNo - 1) * pageSize)
       .limit(pageSize)
     const total = await Book.find().count()
-    res.send({ total, items })
+    const readed = await Book.find({ status: 1 }).count()
+    const recommend = await Book.find({ status: 2 }).count()
+    const num = [total, readed, recommend]
+
+    res.send({ num, items })
   })
 
   app.get('/frontend/api/post', async (req, res) => {
