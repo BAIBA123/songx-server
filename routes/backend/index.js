@@ -1,4 +1,5 @@
 module.exports = (app) => {
+  const path = require('path')
   const express = require('express')
   const router = express.Router({ mergeParams: true })
 
@@ -58,11 +59,39 @@ module.exports = (app) => {
   }, router)
 
   // 文件上传
+
   const multer = require('multer')
-  const upload = multer({ dest: __dirname + '/../../uploads' })
+  var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      // cb(null, __dirname + '/../../uploads')
+      cb(null, path.join(__dirname, '/../../uploads'))
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+  const upload = multer({ storage })
 
   app.post('/backend/api/uploads', upload.single('file'), async (req, res) => {
     const { file } = req
+
+    // 调用tinyPNG接口压缩图片
+    const filePath = path.join(__dirname, '/../../uploads/', file.originalname)
+    const tinify = require('tinify')
+    tinify.key = 'dJr1j45YnhfqQ177JZwcvMqxzPHZkpgC'
+    tinify.fromFile(filePath).toFile(filePath, function (err) {
+      if (err instanceof tinify.AccountError) {
+        console.log('The error message is 1: ' + err.message)
+      } else if (err instanceof tinify.ClientError) {
+        console.log('The error message is 2: ' + err.message)
+      } else if (err instanceof tinify.ServerError) {
+        console.log('The error message is 3: ' + err.message)
+      } else if (err instanceof tinify.ConnectionError) {
+        console.log('The error message is 4: ' + err.message)
+      } else {
+        console.log('success')
+      }
+    })
     const url = process.env.MODE_ENV === 'development' ? `http://127.0.0.1:9876/uploads/${file.filename}` : `http://114.55.242.15:9876/uploads/${file.filename}`
     res.send({ url, errno: 0 })
   })

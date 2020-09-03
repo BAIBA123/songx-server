@@ -30,9 +30,10 @@ module.exports = (app) => {
       const before = await req.Model.find({ date: { $gt: date.date } }).limit(1)
       const next = await req.Model.find({ date: { $lt: date.date } }).sort('-date').limit(1)
       res.send({ before, next, item })
+    } else {
+      const item = await req.Model.findById(req.params.id)
+      res.send({ item })
     }
-    const item = await req.Model.findById(req.params.id)
-    res.send({ item })
   })
 
   // restful api next 中间件
