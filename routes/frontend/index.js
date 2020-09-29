@@ -7,6 +7,7 @@ module.exports = (app) => {
   const Post = require('../../models/Post')
   const Store = require('../../models/Store')
   const Comment = require('../../models/Comment')
+  const App = require('../../models/App')
   const router = express.Router({ mergeParams: true })
 
   // 获取列表 菜单 && 友链
